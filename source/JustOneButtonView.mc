@@ -1,21 +1,42 @@
+using Toybox.Application;
 using Toybox.Communications;
 using Toybox.Lang;
 using Toybox.WatchUi;
 
 class JustOneButtonView extends WatchUi.View {
-	const AUTH_HEADER = "Bearer ..."; 
+	var getOptions;
+	var postOptions;
 
 	var queriedSwitchState = false;
 	var gotValidState = false;
 	var hitError = false;
 	
-	var isLightOff = false;
-	
+	var isSwitchOff = false;
 	var pendingToggle = false;
 	
-	var inputSyncState; // HomeHelperInputSyncState
+	var inputSyncState;
 	function initialize(state) {
 		inputSyncState = state;
+		
+		var authToken = Lang.format("Bearer $1$", [Application.getApp().getProperty("AuthBearerToken")]);
+		getOptions = {
+    		:method => Communications.HTTP_REQUEST_METHOD_GET,
+    		:headers => {
+    			"Content-Type" => Communications.REQUEST_CONTENT_TYPE_JSON,
+    			"Authorization" => authToken
+    		},
+    		:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+    	};
+    	
+    	postOptions = {
+    		:method => Communications.HTTP_REQUEST_METHOD_POST,
+    		:headers => {
+    			"Content-Type" => Communications.REQUEST_CONTENT_TYPE_JSON,
+    			"Authorization" => authToken
+    		},
+    		:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+    	};
+		
 		View.initialize();
 	}
 	
@@ -24,7 +45,7 @@ class JustOneButtonView extends WatchUi.View {
 			gotValidState = true;
       		if("off".equals(data["state"]))
       		{
-      			isLightOff = true;
+      			isSwitchOff = true;
       		}
        	}
    		else {
@@ -37,7 +58,7 @@ class JustOneButtonView extends WatchUi.View {
 	function onSwitchToggleResponse(responseCode, data) {
 		pendingToggle = false;
 		if (responseCode == 200) {
-			isLightOff = !isLightOff;
+			isSwitchOff = !isSwitchOff;
 			getSwitchStatus();
        	}
    		else {
@@ -48,43 +69,55 @@ class JustOneButtonView extends WatchUi.View {
 	}
 	
 	function getSwitchStatus() {
-    	var url = "switch_status"; 
-    	
-    	var options = {
-    		:method => Communications.HTTP_REQUEST_METHOD_GET,
-    		:headers => {
-    			"Content-Type" => Communications.REQUEST_CONTENT_TYPE_JSON,
-    			"Authorization" => AUTH_HEADER
-    		},
-    		:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
-    	};
-    	
-    	Communications.makeWebRequest(url, {}, options, method(:onSwitchStatusResponse));
+    	var url = Application.getApp().getProperty("StatusUri"); 
+    	Communications.makeWebRequest(url, {}, getOptions, method(:onSwitchStatusResponse));
 	}
 	
 	function toggleSwitchState() {
     	var url = "";
-    	if (isLightOff) {
-    		url = "turn_on";
+    	if (isSwitchOff) {
+    		url = Application.getApp().getProperty("TurnOnUri");
     	} else {
-    		url = "turn_off";
+    		url = Application.getApp().getProperty("TurnOffUri");
     	}
     	
-    	var options = {
-    		:method => Communications.HTTP_REQUEST_METHOD_POST,
-    		:headers => {
-    			"Content-Type" => Communications.REQUEST_CONTENT_TYPE_JSON,
-    			"Authorization" => AUTH_HEADER
-    		},
-    		:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
-    	};
-    	
-    	Communications.makeWebRequest(url, { "entity_id" => "the entity id" }, options, method(:onSwitchToggleResponse));
+    	var entityId = Application.getApp().getProperty("EntityId");
+    	Communications.makeWebRequest(url, { "entity_id" => entityId }, postOptions, method(:onSwitchToggleResponse));
+	}
+	
+	function getRingColor() {
+		var ringColor = Graphics.COLOR_BLUE;
+        if (hitError)
+        {
+        	ringColor = Graphics.COLOR_DK_RED;
+        }
+        else if (pendingToggle)
+        {
+        	ringColor = Graphics.COLOR_YELLOW;
+        }
+        
+        return ringColor;
+	}
+	
+	function getButtonColor() {
+		var buttonColor = Graphics.COLOR_LT_GRAY;
+        if (gotValidState)
+        {
+        	if (isSwitchOff)
+        	{
+        		buttonColor = Graphics.COLOR_RED;
+    		}
+    		else
+    		{
+    			buttonColor = Graphics.COLOR_GREEN;
+    		}
+        }
+        
+        return buttonColor;
 	}
 
-    // Update the view
     function onUpdate(dc) {
-		//// Handle switch state updates    
+		// Handle switch input / status updates.    
     	if (!queriedSwitchState) {
     		queriedSwitchState = true;
     		getSwitchStatus();
@@ -96,39 +129,15 @@ class JustOneButtonView extends WatchUi.View {
     		toggleSwitchState();
     	}
     	
-    	//// Render appropriately
-    	// Reset the background
+    	// Render
         dc.clearClip();
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
         dc.fillRectangle(0, 0, dc.getWidth(), dc.getHeight());
-        
-        var lightStateColor = Graphics.COLOR_LT_GRAY;
-        if (gotValidState)
-        {
-        	if (isLightOff)
-        	{
-        		lightStateColor = Graphics.COLOR_RED;
-    		}
-    		else
-    		{
-    			lightStateColor = Graphics.COLOR_GREEN;
-    		}
-        }
-        
-        var pendingColor = Graphics.COLOR_BLUE;
-        if (hitError)
-        {
-        	pendingColor = Graphics.COLOR_DK_RED;
-        }
-        else if (pendingToggle)
-        {
-        	pendingColor = Graphics.COLOR_YELLOW;
-        }
 
-        dc.setColor(pendingColor, Graphics.COLOR_BLUE);
+        dc.setColor(getRingColor(), Graphics.COLOR_BLUE);
         dc.fillCircle(120, 120, SyncState.RING_RADIUS);
         
-        dc.setColor(lightStateColor, Graphics.COLOR_WHITE);
+        dc.setColor(getButtonColor(), Graphics.COLOR_WHITE);
         dc.fillCircle(120, 120, SyncState.BUTTON_RADIUS);
     }
 }

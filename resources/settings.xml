@@ -1,0 +1,27 @@
+<resources>
+    <properties>
+        <property id="AuthBearerToken" type="string"></property>
+        <property id="StatusUri" type="string"></property>
+        <property id="TurnOnUri" type="string"></property>
+        <property id="TurnOffUri" type="string"></property>
+        <property id="EntityId" type="string"></property>
+    </properties>
+
+	<settings>
+    	<setting propertyKey="@Properties.AuthBearerToken" title="@Strings.AuthBearerTokenText">
+       		<settingConfig type="alphaNumeric" required="true" />
+   		</setting>
+   		<setting propertyKey="@Properties.StatusUri" title="@Strings.StatusUriText">
+       		<settingConfig type="alphaNumeric" required="true" />
+   		</setting>
+   		<setting propertyKey="@Properties.TurnOnUri" title="@Strings.TurnOnUriText">
+       		<settingConfig type="alphaNumeric" required="true" />
+   		</setting>
+ 		<setting propertyKey="@Properties.TurnOffUri" title="@Strings.TurnOffUriText">
+       		<settingConfig type="alphaNumeric" required="true" />
+   		</setting>
+ 		<setting propertyKey="@Properties.EntityId" title="@Strings.EntityIdText">
+       		<settingConfig type="alphaNumeric" required="true" />
+   		</setting>
+	</settings>
+</resources>

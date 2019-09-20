@@ -1,3 +1,8 @@
 <strings>
     <string id="AppName">JustOneButton</string>
+    <string id="AuthBearerTokenText">Auth Bearer Token</string>
+    <string id="StatusUriText">Status URI</string>
+    <string id="TurnOnUriText">Turn On URI</string>
+    <string id="TurnOffUriText">Turn Off URI</string>
+    <string id="EntityIdText">Entity ID</string>
 </strings>
