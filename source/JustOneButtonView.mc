@@ -126,7 +126,7 @@ class JustOneButtonView extends WatchUi.View {
         }
 
         dc.setColor(pendingColor, Graphics.COLOR_BLUE);
-        dc.fillCircle(120, 120, 80);
+        dc.fillCircle(120, 120, SyncState.RING_RADIUS);
         
         dc.setColor(lightStateColor, Graphics.COLOR_WHITE);
         dc.fillCircle(120, 120, SyncState.BUTTON_RADIUS);
