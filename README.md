@@ -2,14 +2,15 @@
 A Garmin Watchface with one button to interact with a https://www.home-assistant.io/ switch
 
 # About
-**JustOneButton** is when you just want one button
+**JustOneButton** is when you just want one button.
 
-(TODO image here)
+![image of app](./Demo.jpg)
 
-This button connects to a HomeAssistant server to perform an IoT home automation task, such as turning a switch on and off.
+This button connects to a [HomeAssistant](https://www.home-assistant.io/) server to
+perform an IoT home automation task, such as turning a switch on and off.
 
 # Setup
-1. TODO [Install HomeAssistant](./HomeAssistantSetup.md) 
+1. [Install HomeAssistant](./HomeAssistantSetup.md) 
 2. Install **JustOneButton** on the watch
 3. Set the following settings
    * **Auth Bearer Token**
@@ -40,7 +41,10 @@ Click it again and the switch will turn off.
 * **Red**: Network error. 
 
 ## Diagnosing Errors
-TODO
+Error diagnosis is a tricky process with embedded devices. Please make sure:
+- All URIs are HTTPS and the SSL certificate used is trusted
+- The Auth bearer token is correct, has no leading or trailing spaces, and does not include the 'Bearer ' phrase.
+- The correct 'switch.my_switch' Home Assistant device exists.
 
 # Advanced Setup
 If you don't have or want a Home Assistant server, you can setup your own server.
