@@ -57,6 +57,7 @@ pip3.5 install homeassistant
 1. From within the Python virtual environment, start Home Assistant (slow when first started)
 
  ```hass```
+
 2. Navigate to the UI once Home Assistant has started
     - http://LOCAL_IP:8123/lovelace/default_view
  
