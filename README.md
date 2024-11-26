@@ -1,5 +1,11 @@
-# JustOneButton
+# Preface
+This repository holds two projects
+
+## JustOneButton
 A Garmin Watchface with one button to interact with a https://www.home-assistant.io/ switch
+
+## ToneCreator
+A Garmin app to sound the device buzzer and play hardcoded songs.
 
 # About
 **JustOneButton** is when you just want one button.

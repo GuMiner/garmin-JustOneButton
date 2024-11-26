@@ -1,0 +1,4 @@
+<menu id="MainMenu">
+    <menu-item id="song1" label="@Strings.song1" />
+    <menu-item id="song2" label="@Strings.song2" />
+</menu>
